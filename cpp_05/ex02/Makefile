@@ -3,6 +3,7 @@ Bureaucrat.cpp\
 AForm.cpp\
 ShrubberyCreationForm.cpp\
 RobotomyRequestForm.cpp\
+PresidencialPardonForm.cpp\
 
 NAME = test
 

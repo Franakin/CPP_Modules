@@ -99,8 +99,3 @@ const char	*AForm::FormNotSignedForExecException::what() const throw()
 {
 	return "Form needs to be signed to be executed";
 }
-
-const char	*AForm::UnluckyException::what() const throw()
-{
-	return "You got unlucky, better luck next time!";
-}

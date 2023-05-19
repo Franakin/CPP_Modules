@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/16 16:21:42 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/19 16:18:48 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/19 18:25:03 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,9 @@ PresidencialPardonForm	&PresidencialPardonForm::operator=(const PresidencialPard
 //member functions---------------------------------------------------------------------------------------------------------------------------------------------------
 void	PresidencialPardonForm::execute(const Bureaucrat &executor) const
 {
+	if (executor.getGrade() > this->getMinExecGrade())
+		throw AForm::GradeTooLowException();
+	if (!this->getSignStatus())
+		throw AForm::FormNotSignedForExecException();
 	std::cout << this->target << " has been pardoned by Zaphod Beeblebrox!" << std::endl;
 }

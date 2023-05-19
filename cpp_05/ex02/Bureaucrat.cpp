@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/04/24 15:04:55 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/19 15:58:15 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/19 18:15:52 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,11 +84,6 @@ void	Bureaucrat::executeForm(const AForm &form)
 		return;
 	}
 	catch(AForm::FormNotSignedForExecException &e)
-	{
-		std::cout << this->name << " couldn't execute " << form.getName() << " because: " << e.what() << std::endl;
-		return;
-	}
-	catch(AForm::UnluckyException &e)
 	{
 		std::cout << this->name << " couldn't execute " << form.getName() << " because: " << e.what() << std::endl;
 		return;
