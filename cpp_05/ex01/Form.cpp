@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/10 15:52:25 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/19 16:09:05 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/22 13:29:34 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ Form	&Form::operator=(const Form &copy)
 std::ostream	&operator<<(std::ostream &out, const Form &b)
 {
 	out << "_____________________________\n";
-	out << "| AForm name: " << b.getName() << "\n|\n";
+	out << "| Form name: " << b.getName() << "\n|\n";
 	out << "| Min grade for signing: " << b.getMinSignGrade() << '\n';
 	out << "| Min grade for executing: " << b.getMinExecGrade() << "\n|\n";
 	out << "| Signed? ";

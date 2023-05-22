@@ -37,7 +37,7 @@ AForm	&AForm::operator=(const AForm &copy)
 std::ostream	&operator<<(std::ostream &out, const AForm &b)
 {
 	out << "_____________________________\n";
-	out << "| AForm name: " << b.getName() << "\n|\n";
+	out << "| Form name: " << b.getName() << "\n|\n";
 	out << "| Min grade for signing: " << b.getMinSignGrade() << '\n';
 	out << "| Min grade for executing: " << b.getMinExecGrade() << "\n|\n";
 	out << "| Signed? ";
