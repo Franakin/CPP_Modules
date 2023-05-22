@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/04/24 15:05:00 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/10 19:03:32 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/22 14:27:14 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	f(void)
 
 int main(void)
 {
-	std::cout << "--------------------EX00--------------------" << std::endl;
+	std::cout << "\033[1;46m--------------------EX00--------------------\033[0m" << std::endl;
 
 	//init with grade too high
 	try
@@ -85,10 +85,10 @@ int main(void)
 		std::cerr << e.what() << std::endl;
 	}
 
-	std::cout << std::endl << "--------------------EX01--------------------" << std::endl;
+	std::cout << std::endl << "\033[1;46m--------------------EX01--------------------\033[0m" << std::endl;
 
 	//create good bureaucrat, signable form, and make him sign it
-	std::cout << "[create good bureaucrat, signable form, and make him sign it]" << std::endl;
+	std::cout << "\033[0;32m[create good bureaucrat, signable form, and make him sign it]\033[0m" << std::endl;
 	try
 	{
 		Bureaucrat	josh("Joshua", 5);
@@ -119,7 +119,7 @@ int main(void)
 	}
 	
 	//create forms out of bounds
-	std::cout << std::endl << "[create forms out of bounds]" << std::endl;
+	std::cout << std::endl << "\033[0;32m[create forms out of bounds]\033[0m" << std::endl;
 	try
 	{
 		Form	form1("form1", 1, 151);
@@ -146,7 +146,7 @@ int main(void)
 	}
 	
 	//low grade bureaucrat tries to sign high grade form
-	std::cout << std::endl << "[low grade bureaucrat tries to sign high grade form]" << std::endl;
+	std::cout << std::endl << "\033[0;32m[low grade bureaucrat tries to sign high grade form]\033[0m" << std::endl;
 	try
 	{
 		Bureaucrat	josh("Joshua", 150);
@@ -173,7 +173,7 @@ int main(void)
 	}
 
 	//bureaucrat tries to sign form twice
-	std::cout << std::endl << "[bureaucrat tries to sign form twice]" << std::endl;
+	std::cout << std::endl << "\033[0;32m[bureaucrat tries to sign form twice]\033[0m" << std::endl;
 	try
 	{
 		Bureaucrat	josh("Joshua", 1);

@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/04/24 15:05:00 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/19 18:36:14 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/22 14:24:32 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,6 +257,7 @@ int main(void)
 	{
 		std::cout << e.what() << std::endl;
 	}
+	std::cout << std::endl;
 	atexit(f);
 	return 0;
 }
