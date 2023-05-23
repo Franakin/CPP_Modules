@@ -1,5 +1,6 @@
 SRC = main.cpp\
 ScalarConverter.cpp\
+Accessors.cpp\
 
 NAME = test
 

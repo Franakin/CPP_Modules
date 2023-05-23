@@ -6,57 +6,33 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/22 17:33:39 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/22 17:51:48 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/23 15:23:04 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
 
-void	ScalarConverter::setLiteral(std::string literal)
+std::string	ScalarConverter::getLiteral(void)
 {
-	this->literal = literal;
+	return _literal;
 }
 
-std::string	ScalarConverter::getLiteral(void) const
+char	ScalarConverter::getChar(void)
 {
-	return this->literal;
+	return _c;
 }
 
-void	ScalarConverter::setChar(char c)
+int		ScalarConverter::getInt(void)
 {
-	this->c = c;
+	return _i;
 }
 
-char	ScalarConverter::getChar(void) const
+float	ScalarConverter::getFloat(void)
 {
-	return this->c;
-}
-void	ScalarConverter::setInt(int i)
-{
-	this->i = i;
+	return _f;
 }
 
-int		ScalarConverter::getInt(void) const
+double	ScalarConverter::getDouble(void)
 {
-	return this->i;
-}
-
-void	ScalarConverter::setFloat(float f)
-{
-	this->f = f;
-}
-
-float	ScalarConverter::getFloat(void) const
-{
-	return this->f;
-}
-
-void	ScalarConverter::setDouble(double d)
-{
-	this->d = d;
-}
-
-double	ScalarConverter::getDouble(void) const
-{
-	return this->d;
+	return _d;
 }

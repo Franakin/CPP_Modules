@@ -6,103 +6,204 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/22 15:34:43 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/22 19:38:30 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/23 19:32:09 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
 
-//defaults--------------------------------------------------------------------------------------------------------------------------------------------
-ScalarConverter::ScalarConverter(void) :
-	literal("0"),
-	c('\0'),
-	i(0),
-	f(0.0f),
-	d(0.0){}
+std::string ScalarConverter::_literal = "0";
+char		ScalarConverter::_c = '\0';
+int			ScalarConverter::_i = 0;
+float		ScalarConverter::_f = 0.0f;
+double		ScalarConverter::_d = 0.0;
+e_type		ScalarConverter::_type = NONE;
 
-ScalarConverter::ScalarConverter(const ScalarConverter &copy) :
-	literal(copy.literal),
-	c(copy.c),
-	i(copy.i),
-	f(copy.f),
-	d(copy.d){}
+
+//defaults--------------------------------------------------------------------------------------------------------------------------------------------
+ScalarConverter::ScalarConverter(void){}
+
+ScalarConverter::ScalarConverter(const ScalarConverter &copy)
+{
+	_literal = copy.getLiteral();
+	_c = copy.getChar();
+	_i = copy.getInt();
+	_f = copy.getFloat();
+	_d = copy.getDouble();
+}
 
 ScalarConverter::~ScalarConverter(void){}
 
 //operators--------------------------------------------------------------------------------------------------------------------------------------------
 ScalarConverter	&ScalarConverter::operator=(const ScalarConverter &copy)
 {
-	this->literal = copy.getLiteral();
-	this->c = copy.getChar();
-	this->i = copy.getInt();
-	this->f = copy.getFloat();
-	this->d = copy.getDouble();
+	_literal = copy.getLiteral();
+	_c = copy.getChar();
+	_i = copy.getInt();
+	_f = copy.getFloat();
+	_d = copy.getDouble();
 	return (*this);
 }
 
-//member functions--------------------------------------------------------------------------------------------------------------------------------------------
+//MEMEBER FUNCTIONS--------------------------------------------------------------------------------------------------------------------------------------------
+//bools-------------------------------------------------------------------------------------------------------------------------------------------------
+bool	ScalarConverter::isChar(void)
+{
+	return (_literal.size() == 1 && _literal.at(0) >= 0 && _literal.at(0) <= 127);
+}
+
 bool	ScalarConverter::isInt(void)
 {
-	return (this->literal.find_first_not_of("-0123456789") == std::string::npos &&
-	(this->literal.find_last_of("-") == 0 || this->literal.find_last_of("-") == std::string::npos));
+	return (_literal.find_first_not_of("-0123456789") == std::string::npos &&
+	(_literal.find_last_of("-") == 0 || _literal.find_last_of("-") == std::string::npos));
 }
 
 bool	ScalarConverter::isFloat(void)
 {
-	return (this->literal.find_first_not_of("-01234567890.f") == std::string::npos &&
-	this->literal.find_first_of("f") == this->literal.length() &&
-	this->literal.find_first_of(".") == this->literal.find_last_of("."));
+	return (_literal.find_first_not_of("-01234567890.f") == std::string::npos &&
+	_literal.find_first_of("f") == _literal.size() - 1 &&
+	_literal.find_first_of(".") == _literal.find_last_of(".") &&
+	(_literal.find_last_of("-") == 0 || _literal.find_last_of("-") == std::string::npos));
 }
 
 bool	ScalarConverter::isDouble(void)
 {
-	return (this->literal.find_first_not_of("-01234567890.") == std::string::npos &&
-	this->literal.find_first_of(".") == this->literal.find_last_of("."));
+	return (_literal.find_first_not_of("-01234567890.") == std::string::npos &&
+	_literal.find_first_of(".") == _literal.find_last_of(".") &&
+	(_literal.find_last_of("-") == 0 || _literal.find_last_of("-") == std::string::npos));
 }
 
-void	ScalarConverter::convert(std::string literal)
+bool	ScalarConverter::hasDecimals(void)
 {
-	this->literal = literal;
-	if (isInt())
-	{
-		this->type = INT;
-		this->i = std::stoi(this->literal);
-	}
-	else if (isFloat())
-	{
-		this->type = FLOAT;
-		this->f = std::stof(this->literal);
-	}
-	else if (isDouble())
-	{
-		this->type = DOUBLE;
-		this->d = std::stod(this->literal);
-	}
-	else
-		this->type = NONE;
-	casting();
+	const size_t	lastNonZero = _literal.find_last_not_of("0f");
+	const size_t	firstDot = _literal.find_first_of('.');
+
+	return (lastNonZero > firstDot && lastNonZero - firstDot < 5);
 }
 
+//converter---------------------------------------------------------------------------------------------------------------------------------------------
+void	ScalarConverter::convert(const std::string literal)
+{
+	_literal = literal;
+	try
+	{
+		if (isInt())
+		{
+			_type = INT;
+			_i = std::stoi(_literal);
+		}
+		else if (isChar())
+		{
+			_type = CHAR;
+			_c = _literal.at(0);
+		}
+		else if (isFloat())
+		{
+			_type = FLOAT;
+			_f = std::stof(_literal);
+		}
+		else if (isDouble())
+		{
+			_type = DOUBLE;
+			_d = std::stod(_literal);
+		}
+		else
+			_type = NONE;
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return;
+	}
+	casting();
+	printAll();
+}
+
+//casting----------------------------------------------------------------------------------------------------------------------------------------------
 void	ScalarConverter::casting(void)
 {
-	switch (this->type)
+	switch (_type)
 	{
+	case CHAR:
+		_i = static_cast <int>(_c);
+		_f = static_cast <float>(_c);
+		_d = static_cast <double>(_c);
 	case INT:
-		this->c = static_cast <char>(this->i);
-		this->f = static_cast <float>(this->i);
-		this->d = static_cast <double>(this->i);
+		_c = static_cast <char>(_i);
+		_f = static_cast <float>(_i);
+		_d = static_cast <double>(_i);
 		break;
 	case FLOAT:
-		this->c = static_cast <char>(this->f);
-		this->i = static_cast <float>(this->f);
-		this->d = static_cast <double>(this->f);
+		_c = static_cast <char>(_f);
+		_i = static_cast <float>(_f);
+		_d = static_cast <double>(_f);
 		break;
 	case DOUBLE:
-		this->c = static_cast <char>(this->d);
-		this->f = static_cast <float>(this->d);
-		this->i = static_cast <double>(this->d);
+		_c = static_cast <char>(_d);
+		_f = static_cast <float>(_d);
+		_i = static_cast <double>(_d);
 		break;
 	case NONE:
-		this->impossible = true;
+		break;
 	}
+}
+
+//printing--------------------------------------------------------------------------------------------------------------------------------------------
+void	ScalarConverter::printAll(void)
+{
+	if (_type != NONE)
+	{
+		std::cout << "Char: " << makeChar() << std::endl;
+		std::cout << "Int: " << makeInt() << std::endl;
+		std::cout << "Float: " << makeFloat() << std::endl;
+		std::cout << "Double: " << makeDouble() << std::endl;
+	}
+	else
+	{
+		std::cout << "Char: Impossible" << std::endl;
+		std::cout << "Int: Impossible"<< std::endl;
+		std::cout << "Float: Impossible" << std::endl;
+		std::cout << "Double: Impossible" << std::endl;
+	}
+}
+
+std::string	ScalarConverter::makeInt(void)
+{
+	if (_i == -2147483648 && _literal != "-2147483648")
+		return "Impossible";
+	return std::to_string(_i);
+}
+
+std::string	ScalarConverter::makeChar(void)
+{
+	if (_i == -2147483648 && _literal != "-2147483648")
+		return "Impossible";
+	if (_c < 0 || _c > 127)
+		return "Impossible";
+	else if (!isprint(_c))
+		return "Non displayable";
+	return std::string() + '\'' + _c + '\'';
+}
+
+std::string	ScalarConverter::makeFloat(void)
+{
+	std::string	strFloat = std::to_string(_f);
+	int	i = strFloat.size() - 1;
+
+	while (strFloat.at(i) == '0' && strFloat.at(i - 1) != '.')
+		i--;
+	strFloat.erase(i + 1, std::string::npos);
+	strFloat.append("f");
+	return strFloat;
+}
+
+std::string	ScalarConverter::makeDouble(void)
+{
+	std::string	strDouble = std::to_string(_d);
+	int	i = strDouble.size() - 1;
+
+	while (strDouble.at(i) == '0' && strDouble.at(i - 1) != '.')
+		i--;
+	strDouble.erase(i + 1, std::string::npos);
+	return strDouble;
 }
