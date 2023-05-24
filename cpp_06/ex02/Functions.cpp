@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/24 17:22:56 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/24 18:37:24 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/24 18:43:02 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ Base	*generate(void)
 	std::string		line;
 	std::getline(devRandom, line);
 	devRandom.close();
-		
+
 	const unsigned int	random = line.size() % 3;
 
 	switch (random)
