@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/22 17:33:39 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/23 15:23:04 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/24 14:49:20 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,6 @@
 std::string	ScalarConverter::getLiteral(void)
 {
 	return _literal;
-}
-
-char	ScalarConverter::getChar(void)
-{
-	return _c;
 }
 
 int		ScalarConverter::getInt(void)

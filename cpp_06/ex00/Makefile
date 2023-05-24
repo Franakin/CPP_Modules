@@ -1,8 +1,8 @@
-SRC = main.cpp\
+SRC = ConvertProgram.cpp\
 ScalarConverter.cpp\
 Accessors.cpp\
 
-NAME = test
+NAME = convert
 
 $(NAME)	:	$(SRC)
 	c++ -Wall -Werror -Wextra -std=c++98 $(SRC) -o $(NAME)

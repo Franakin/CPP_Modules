@@ -6,14 +6,15 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/22 15:34:43 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/23 19:32:09 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/24 16:28:37 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ScalarConverter.hpp"
+#include <string>
+#include <sstream>
 
 std::string ScalarConverter::_literal = "0";
-char		ScalarConverter::_c = '\0';
 int			ScalarConverter::_i = 0;
 float		ScalarConverter::_f = 0.0f;
 double		ScalarConverter::_d = 0.0;
@@ -26,7 +27,6 @@ ScalarConverter::ScalarConverter(void){}
 ScalarConverter::ScalarConverter(const ScalarConverter &copy)
 {
 	_literal = copy.getLiteral();
-	_c = copy.getChar();
 	_i = copy.getInt();
 	_f = copy.getFloat();
 	_d = copy.getDouble();
@@ -38,7 +38,6 @@ ScalarConverter::~ScalarConverter(void){}
 ScalarConverter	&ScalarConverter::operator=(const ScalarConverter &copy)
 {
 	_literal = copy.getLiteral();
-	_c = copy.getChar();
 	_i = copy.getInt();
 	_f = copy.getFloat();
 	_d = copy.getDouble();
@@ -73,12 +72,10 @@ bool	ScalarConverter::isDouble(void)
 	(_literal.find_last_of("-") == 0 || _literal.find_last_of("-") == std::string::npos));
 }
 
-bool	ScalarConverter::hasDecimals(void)
+bool	ScalarConverter::hasDecimals(std::string output)
 {
-	const size_t	lastNonZero = _literal.find_last_not_of("0f");
-	const size_t	firstDot = _literal.find_first_of('.');
-
-	return (lastNonZero > firstDot && lastNonZero - firstDot < 5);
+	return (output.find_first_of('e') == std::string::npos && output.find_first_of('.') != std::string::npos);
+	
 }
 
 //converter---------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,7 +92,7 @@ void	ScalarConverter::convert(const std::string literal)
 		else if (isChar())
 		{
 			_type = CHAR;
-			_c = _literal.at(0);
+			_i = _literal.at(0);
 		}
 		else if (isFloat())
 		{
@@ -107,6 +104,12 @@ void	ScalarConverter::convert(const std::string literal)
 			_type = DOUBLE;
 			_d = std::stod(_literal);
 		}
+		else if (_literal == "nan" || _literal == "nanf")
+			_type = NAN;
+		else if (_literal == "+inf" || _literal == "+inff")
+			_type = POSINF;
+		else if (_literal == "-inf" || _literal == "-inff")
+			_type = NEGINF;
 		else
 			_type = NONE;
 	}
@@ -116,7 +119,10 @@ void	ScalarConverter::convert(const std::string literal)
 		return;
 	}
 	casting();
-	printAll();
+	printChar();
+	printInt();
+	printFloat();
+	printDouble();
 }
 
 //casting----------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,86 +130,112 @@ void	ScalarConverter::casting(void)
 {
 	switch (_type)
 	{
-	case CHAR:
-		_i = static_cast <int>(_c);
-		_f = static_cast <float>(_c);
-		_d = static_cast <double>(_c);
 	case INT:
-		_c = static_cast <char>(_i);
+	case CHAR:
 		_f = static_cast <float>(_i);
 		_d = static_cast <double>(_i);
 		break;
 	case FLOAT:
-		_c = static_cast <char>(_f);
 		_i = static_cast <float>(_f);
 		_d = static_cast <double>(_f);
 		break;
 	case DOUBLE:
-		_c = static_cast <char>(_d);
 		_f = static_cast <float>(_d);
 		_i = static_cast <double>(_d);
 		break;
-	case NONE:
+	default:
 		break;
 	}
 }
 
 //printing--------------------------------------------------------------------------------------------------------------------------------------------
-void	ScalarConverter::printAll(void)
+void	ScalarConverter::printInt(void)
 {
-	if (_type != NONE)
-	{
-		std::cout << "Char: " << makeChar() << std::endl;
-		std::cout << "Int: " << makeInt() << std::endl;
-		std::cout << "Float: " << makeFloat() << std::endl;
-		std::cout << "Double: " << makeDouble() << std::endl;
-	}
+	std::cout << "Int: ";
+	if ((_i == -2147483648 && _literal.compare(0, 11, "-2147483648")) ||
+		_type == NONE ||
+		_type == NAN ||
+		_type == POSINF ||
+		_type == NEGINF)
+		std::cout << "Impossible";
 	else
+		std::cout << _i;
+	std::cout << std::endl;
+}
+
+void	ScalarConverter::printChar(void)
+{
+	std::cout << "Char: ";
+	if ((_i == -2147483648 && _literal.compare(0, 11, "-2147483648")) ||
+		(_i < 0 || _i > 127) ||
+		_type == NONE ||
+		_type == NAN ||
+		_type == POSINF ||
+		_type == NEGINF)
+		std::cout << "Impossible";
+	else if (!isprint(static_cast <char>(_i)))
+		std::cout << "Non displayable";
+	else
+		std::cout << '\'' << static_cast <char>(_i) << '\'';
+	std::cout << std::endl;
+}
+
+void	ScalarConverter::printFloat(void)
+{
+	std::stringstream	buffer;
+
+	std::cout << "Float: ";
+	switch (_type)
 	{
-		std::cout << "Char: Impossible" << std::endl;
-		std::cout << "Int: Impossible"<< std::endl;
-		std::cout << "Float: Impossible" << std::endl;
-		std::cout << "Double: Impossible" << std::endl;
+		case POSINF:
+			std::cout << "+inff" << std::endl;
+			return;
+		case NEGINF:
+			std::cout << "-inff" << std::endl;
+			return;
+		case NAN:
+			std::cout << "nanf" << std::endl;
+			return;
+		case NONE:
+			std::cout << "Impossible" << std::endl;
+			return;
+		default:
+			buffer << _f;
+			std::cout << _f;
 	}
+	if (buffer.str() != "inf")
+	{
+		if (!hasDecimals(buffer.str()))
+			std::cout << ".0";
+		std::cout << 'f';
+	}
+	std::cout << std::endl;
 }
 
-std::string	ScalarConverter::makeInt(void)
+void	ScalarConverter::printDouble(void)
 {
-	if (_i == -2147483648 && _literal != "-2147483648")
-		return "Impossible";
-	return std::to_string(_i);
-}
-
-std::string	ScalarConverter::makeChar(void)
-{
-	if (_i == -2147483648 && _literal != "-2147483648")
-		return "Impossible";
-	if (_c < 0 || _c > 127)
-		return "Impossible";
-	else if (!isprint(_c))
-		return "Non displayable";
-	return std::string() + '\'' + _c + '\'';
-}
-
-std::string	ScalarConverter::makeFloat(void)
-{
-	std::string	strFloat = std::to_string(_f);
-	int	i = strFloat.size() - 1;
-
-	while (strFloat.at(i) == '0' && strFloat.at(i - 1) != '.')
-		i--;
-	strFloat.erase(i + 1, std::string::npos);
-	strFloat.append("f");
-	return strFloat;
-}
-
-std::string	ScalarConverter::makeDouble(void)
-{
-	std::string	strDouble = std::to_string(_d);
-	int	i = strDouble.size() - 1;
-
-	while (strDouble.at(i) == '0' && strDouble.at(i - 1) != '.')
-		i--;
-	strDouble.erase(i + 1, std::string::npos);
-	return strDouble;
+	std::stringstream	buffer;
+	
+	std::cout << "Double: ";
+	switch (_type)
+	{
+		case POSINF:
+			std::cout << "+inf" << std::endl;
+			return;
+		case NEGINF:
+			std::cout << "-inf" << std::endl;
+			return;
+		case NAN:
+			std::cout << "nan" << std::endl;
+			return;
+		case NONE:
+			std::cout << "Impossible" << std::endl;
+			return;
+		default:
+			buffer << _d;
+			std::cout << _d;
+	}
+	if (!hasDecimals(buffer.str()))
+		std::cout << ".0";
+	std::cout << std::endl;
 }
