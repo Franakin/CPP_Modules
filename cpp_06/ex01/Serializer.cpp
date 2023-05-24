@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/24 16:43:27 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/24 16:59:23 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/24 17:10:12 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ Serializer	&Serializer::operator=(const Serializer &copy)
 }
 
 //member functions--------------------------------------------------------------------------------------------------------------------------------------------
-
 uintptr_t	Serializer::serialize(Data *ptr)
 {
 	return (reinterpret_cast<uintptr_t>(ptr));
