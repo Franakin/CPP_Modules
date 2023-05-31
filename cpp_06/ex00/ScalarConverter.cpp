@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/22 15:34:43 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/24 16:28:37 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/24 18:47:33 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	ScalarConverter::convert(const std::string literal)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		std::cerr << "Unable to convert: exception: " << e.what() << std::endl;
 		return;
 	}
 	casting();
