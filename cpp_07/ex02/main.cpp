@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/27 17:54:09 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/31 16:41:15 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/31 19:13:09 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int main(void)
 		std::cout << "\n\033[1;46m--EMPTY ARRAY--\033[0m\n" << std::endl;
         Array<int>  arr;
         std::cout << "Array contents: " << arr << std::endl;
-        std::cout << "On wrong access: " << arr[1] << std::endl;;
+        std::cout << "On wrong access: " << arr[0] << std::endl;;
 	}
     catch(const std::exception& e)
     {
@@ -84,6 +84,8 @@ int main(void)
         newArr = arr;
         std::cout << "Old array contents: " << arr << std::endl;
         std::cout << "New array contents (should be the same): " << newArr << std::endl;
+        Array<int>  arrayThree(newArr);
+        std::cout << "Construction through copy: " << arrayThree << std::endl;
 	}
     catch(const std::exception& e)
     {

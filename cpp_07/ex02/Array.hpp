@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/27 17:54:11 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/05/31 16:39:55 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/05/31 18:34:02 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ class Array
 
 	public:
 		//--------------------------------------------------------------------Defaults
-		Array() : array(new T()), len(1){}
+		Array() : array(new T[0]()), len(0){}
 		Array(unsigned int n) : array(new T[n]()), len(n){}
 		Array(const Array &copy) : array(new T[copy.len]()), len(copy.len)
 		{
