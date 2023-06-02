@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/05/27 17:54:09 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/01 19:44:21 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/02 14:47:25 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 
 int main(void)
 {
-	std::array<int, 5> arrayCont = {1, 2, 3, 4, 5};
+	std::array<int, 6> arrayCont = {1, 2, 3, 4, 5, -6};
 	
 	std::vector<int> vectorCont;
 	for (int i = 0; i < 7; i++)
