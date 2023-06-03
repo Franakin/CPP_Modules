@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/02 15:10:50 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/02 17:48:46 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/03 13:05:29 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@ class Span
 
 		void			addNumber(const int newElement);
 		void			addNumbers(std::list<int>::const_iterator it1, std::list<int>::const_iterator it2);
-		unsigned int	shortestSpan(void) const;
-		unsigned int	longestSpan(void) const;
+		long			shortestSpan(void) const;
+		long			longestSpan(void) const;
+		std::list<int>	getElements(void) const;
 
 		class maxStorageReachedException : public std::exception
 		{
@@ -46,5 +47,7 @@ class Span
 				const char *what() const throw();
 		};
 };
+
+std::ostream	&operator<<(std::ostream &out, const Span &sp);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/02 15:10:52 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/02 19:52:06 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/03 13:22:40 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,23 @@ Span	&Span::operator=(const Span &copy)
 	return (*this);
 }
 
+std::ostream	&operator<<(std::ostream &out, const Span &sp)
+{
+	const std::list<int>			elements = sp.getElements();
+	std::list<int>::const_iterator	it = elements.begin();
+	int								i = 10;
+
+	while (i > 0 && it != elements.end())
+	{
+		out << '[' << *it << ']';
+		it++;
+		i--;
+	}
+	if (!i)
+		out << "...(" << elements.size() << " total numbers)";
+	return out;
+}
+
 //member functions--------------------------------------------------------------------------------------------------------------------------------------------
 void	Span::addNumber(const int newElement)
 {
@@ -49,32 +66,40 @@ void	Span::addNumbers(std::list<int>::const_iterator start, std::list<int>::cons
 	elements.sort();
 }
 
-unsigned int	Span::shortestSpan(void) const
+long	Span::shortestSpan(void) const
 {
 	if (elements.size() < 2)
 		throw noSpanException();
-	unsigned int	minSpan, currentSpan;
+	long	minSpan, currentSpan;
 	std::list<int>::const_iterator it1 = elements.begin();
 	std::list<int>::const_iterator it2 = it1;
+	std::list<int>::const_iterator it3 = it1;
+	it3++;
 	minSpan = longestSpan();
-	while (it2 != elements.end())
+	while (it3 != elements.end())
 	{
 		it2++;
-		currentSpan = std::abs(*it1 - *it2);
+		currentSpan = std::abs((long)*it2 - (long)*it1);
 		if (currentSpan == 0)
 			return 0;
 		if (currentSpan < minSpan)
 			minSpan = currentSpan;
 		it1++;
+		it3++;
 	}
 	return minSpan;
 }
 
-unsigned int	Span::longestSpan(void) const
+long	Span::longestSpan(void) const
 {
 	if (elements.size() < 2)
 		throw noSpanException();
-	return std::abs(elements.back() - elements.front());
+	return std::abs((long)elements.back() - (long)elements.front());
+}
+
+std::list<int>	Span::getElements(void) const
+{
+	return elements;
 }
 
 //exceptions--------------------------------------------------------------------------------------------------------------------------------------------
