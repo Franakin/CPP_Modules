@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/03 15:10:24 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/04 12:42:59 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/05 19:14:12 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,16 +51,8 @@ class MutantStack : public std::stack<T>
 		{
 			return this->c.rend();
 		}
-		
+	
 		//const iterators
-		const_iterator	begin(void) const
-		{
-			return this->c.begin();
-		}
-		const_iterator	end(void) const
-		{
-			return this->c.end();
-		}
 		const_iterator	cbegin(void) const
 		{
 			return this->c.cbegin();
@@ -71,21 +63,13 @@ class MutantStack : public std::stack<T>
 		}
 		
 		//const reverse iterators
-		const_reverse_iterator	rbegin(void) const
-		{
-			return this->c.rbegin();
-		}
-		const_reverse_iterator	rend() const
-		{
-			return this->c.rend();
-		}
 		const_reverse_iterator	crbegin(void) const
 		{
-			return this->crbegin();
+			return this->c.crbegin();
 		}
 		const_reverse_iterator	crend(void) const
 		{
-			return this->crend();
+			return this->c.crend();
 		}
 };
 
