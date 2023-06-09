@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/03 15:10:24 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/05 19:14:12 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/05 19:21:00 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ class MutantStack : public std::stack<T>
 		{
 			return this->c.cend();
 		}
-		
+
 		//const reverse iterators
 		const_reverse_iterator	crbegin(void) const
 		{
