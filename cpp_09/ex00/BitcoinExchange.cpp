@@ -6,12 +6,13 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/06 14:40:18 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/09 19:46:18 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/12 18:25:09 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 #include <fstream>
+#include <algorithm>
 
 //defaults--------------------------------------------------------------------------------------------------------------------------------------------
 BitcoinExchange::BitcoinExchange(void){}
@@ -23,80 +24,129 @@ BitcoinExchange::~BitcoinExchange(void){}
 //operators--------------------------------------------------------------------------------------------------------------------------------------------
 BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &copy){(void)copy; return (*this);}
 
-//member functions-------------------------------------------------------------------------------------------------------------------------------------
-std::map<std::string, std::string>	&BitcoinExchange::getData(e_dataType data) //for testing
+//static fnctions--------------------------------------------------------------------------------------------------------------------------------------
+static void	initDate(std::string &date, std::string &nbrStr, int &year, int &month, int &day, float &number)
 {
-	switch (data)
-	{
-	case PRICEDATA:
-		return priceData;
-	case QUANTDATA:
-		return quantData;
-	}
-}
-
-void	BitcoinExchange::readFile(std::string inFileName, e_dataType data)
-{
-	std::ifstream	fin(inFileName);
-	if (!fin)
-		throw std::runtime_error("Unable to find or open file: " + inFileName);
-	std::string	date, number;
-	std::map<std::string, std::string> *outData;
-	char	deli;
-
-	switch (data)
-	{
-		case PRICEDATA:
-			deli = ',';
-			outData = &priceData;
-			std::getline(fin, date);
-			break;
-		case QUANTDATA:
-			deli = '|';
-			outData = &quantData;
-	}
-	while (std::getline(fin, date, deli))
-	{
-		std::getline(fin, number);
-		(*outData)[date] = number;
-	}
-}
-
-void	BitcoinExchange::checkPriceData(void)
-{
-	std::string	yearStr, monthStr, dayStr;
-	int			yearInt, monthInt, dayInt, i = 1;
-	float		price;
-
+	const size_t	firstDash = date.find_first_of('-');
+	const size_t	lastDash = date.find_last_of('-');
 	try
 	{
-		for (std::map<std::string, std::string>::iterator it = priceData.begin(); it != priceData.end(); ++it)
+		year = std::stoi(date.substr(0, firstDash));
+		month = std::stoi(date.substr(firstDash + 1, lastDash - firstDash - 1));
+		day = std::stoi(date.substr(lastDash + 1, std::string::npos));
+		number = std::stof(nbrStr);
+	}
+	catch(const std::exception& e)
+	{
+		throw std::runtime_error("Error: No conversion: " + date + '|' + nbrStr);
+	}
+}
+
+static bool	validDate(int &year, int &month, int &day)
+{
+	return (year <= 0 || month <= 0 || day <= 0 || month > 12 || day > 31 ||
+			(day == 31 && (month == 4 || month == 6 || month == 9 || month == 11)) || (day > 29 && month == 2) ||
+			(day > 28 && month == 2 && (year % 4 || (!(year % 100) && year % 400))));
+}
+
+//member functions-------------------------------------------------------------------------------------------------------------------------------------
+void	BitcoinExchange::readPriceFile(std::string priceFileName)
+{
+	std::ifstream	fin(priceFileName);
+	if (!fin)
+		throw std::runtime_error("Error: Unable to find or open file: " + priceFileName);
+
+	std::string	date, priceStr;
+	int			i = 1, year, month, day;
+	float		price;
+
+	std::getline(fin, date);
+	try
+	{
+		while (std::getline(fin, date, ','))
 		{
-			const size_t	firstDash = it->first.find_first_of('-');
-			const size_t	lastDash = it->first.find_last_of('-');
-			
-			if (firstDash == std::string::npos || lastDash == firstDash)
-				throw std::runtime_error(it->first);
-			yearStr = it->first.substr(0, firstDash);
-			monthStr = it->first.substr(firstDash + 1, lastDash - firstDash - 1);
-			dayStr = it->first.substr(lastDash + 1, std::string::npos);
-			yearInt = std::stoi(yearStr);
-			monthInt = std::stoi(monthStr);
-			dayInt = std::stoi(dayStr);
-			price = std::stof(it->second);
-			if (yearInt < 0 || monthInt < 0 || monthInt > 12 || dayInt > 31 || (dayInt == 31 && (monthInt == 4 || monthInt == 6 || monthInt == 9 || monthInt == 11)) || (dayInt > 28 && monthInt == 2 && (yearInt % 4 || (!(yearInt % 100) && yearInt % 400))) || (dayInt > 29 && monthInt == 2))
-				throw std::runtime_error(it->first);
 			i++;
+			std::getline(fin, priceStr);
+			if (std::count(date.begin(), date.end(), '-') != 2)
+				throw std::exception();
+			initDate(date, priceStr, year, month, day, price);
+			if (price < 0 || validDate(year, month, day))
+ 				throw std::exception();
+			priceData[year][month][day] = price;
 		}
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << "Error: Bad data input on line " << i << ": " << e.what() << std::endl;
-		exit(1);
+		throw std::runtime_error("Error: Wrong input in data.csv on line " + std::to_string(i) + ": " + date + ',' + priceStr);
 	}
 }
 
-void	BitcoinExchange::calcAndPrintValue(std::map<std::string, std::string> &it)
+void	BitcoinExchange::exec(std::string valFileName)
 {
-	(void)it;
+	std::ifstream	fin(valFileName);
+	if (!fin)
+		throw std::runtime_error("Error: Unable to find or open file: " + valFileName);
+		
+	std::string	line, date, valStr;
+	int			year, month, day;
+	float		value;
+
+	std::getline(fin, line);
+	while (std::getline(fin, line))
+	{
+		try
+		{
+			if (line.find('|') == std::string::npos)
+				throw std::runtime_error("Error: Incomplete: " + line);
+			const size_t	splitSpot = line.find('|');
+			date = line.substr(0, splitSpot);
+			if (std::count(date.begin(), date.end(), '-') != 2)
+				throw std::runtime_error("Error: Unknown date format: " + date);
+			valStr = line.substr(splitSpot + 1, std::string::npos);
+			initDate(date, valStr, year, month, day, value);
+			if (validDate(year, month, day))
+				throw std::runtime_error("Error: Invalid date: " + date);
+			if (value < 0 || value > 1000)
+				throw std::runtime_error("Error: Invalid value: " + valStr);
+			if (year < 2009 || (year == 2009 && month == 1 && day == 1))
+				throw std::runtime_error("Error: Bitcoin didn't exist on " + date);
+			while (priceData.find(year) == priceData.end())
+			{
+				month = 12;
+				day = 31;
+				year--;
+			}
+			while (priceData[year].find(month) == priceData[year].end())
+			{
+				if (month == 1)
+					{
+						month = 12;
+						year--;
+					}
+					else
+						month--;
+			}
+			while (priceData[year][month].find(day) == priceData[year][month].end())
+			{
+				if (day == 1)
+				{
+					day = 31;
+					if (month == 1)
+					{
+						month = 12;
+						year--;
+					}
+					else
+						month--;
+				}
+				else
+					day--;
+			}
+			std::cout << date << " => " << priceData[year][month][day] * value << std::endl;
+		}
+		catch(const std::exception& e)
+		{
+			std::cerr << e.what() << std::endl;
+		}
+	}
 }
