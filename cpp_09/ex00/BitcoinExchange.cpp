@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/06 14:40:18 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/12 18:25:09 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/12 19:45:57 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,26 @@ BitcoinExchange::~BitcoinExchange(void){}
 BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &copy){(void)copy; return (*this);}
 
 //static fnctions--------------------------------------------------------------------------------------------------------------------------------------
+static bool	isInt(std::string &str)
+{
+	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
+		if (!std::isdigit(*it) && *it != '-')
+			return false;
+	return true;
+}
+
+static bool	isFloat(std::string &str)
+{
+	const bool	oneDot = std::count(str.begin(), str.end(), '.') <= 1;
+
+	if (!oneDot)
+		return false;
+	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
+		if (!std::isdigit(*it) && *it != '.')
+			return false;
+	return true;
+}
+
 static void	initDate(std::string &date, std::string &nbrStr, int &year, int &month, int &day, float &number)
 {
 	const size_t	firstDash = date.find_first_of('-');
@@ -36,9 +56,13 @@ static void	initDate(std::string &date, std::string &nbrStr, int &year, int &mon
 		day = std::stoi(date.substr(lastDash + 1, std::string::npos));
 		number = std::stof(nbrStr);
 	}
-	catch(const std::exception& e)
+	catch(const std::invalid_argument& e)
 	{
-		throw std::runtime_error("Error: No conversion: " + date + '|' + nbrStr);
+		throw std::runtime_error("Error: Invalid argument: " + date + '|' + nbrStr);
+	}
+	catch(const std::out_of_range& e)
+	{
+		throw std::runtime_error("Error: Out of range: " + date + '|' + nbrStr);
 	}
 }
 
@@ -69,6 +93,8 @@ void	BitcoinExchange::readPriceFile(std::string priceFileName)
 			std::getline(fin, priceStr);
 			if (std::count(date.begin(), date.end(), '-') != 2)
 				throw std::exception();
+			if (!isInt(date) || !isFloat(priceStr))
+				throw std::runtime_error("Error: Uknown characters: " + date + ',' + priceStr);
 			initDate(date, priceStr, year, month, day, price);
 			if (price < 0 || validDate(year, month, day))
  				throw std::exception();
@@ -86,7 +112,7 @@ void	BitcoinExchange::exec(std::string valFileName)
 	std::ifstream	fin(valFileName);
 	if (!fin)
 		throw std::runtime_error("Error: Unable to find or open file: " + valFileName);
-		
+
 	std::string	line, date, valStr;
 	int			year, month, day;
 	float		value;
@@ -103,11 +129,13 @@ void	BitcoinExchange::exec(std::string valFileName)
 			if (std::count(date.begin(), date.end(), '-') != 2)
 				throw std::runtime_error("Error: Unknown date format: " + date);
 			valStr = line.substr(splitSpot + 1, std::string::npos);
+			if (!isInt(date) || !isFloat(valStr))
+				throw std::runtime_error("Error: Uknown characters: " + line);
 			initDate(date, valStr, year, month, day, value);
 			if (validDate(year, month, day))
 				throw std::runtime_error("Error: Invalid date: " + date);
 			if (value < 0 || value > 1000)
-				throw std::runtime_error("Error: Invalid value: " + valStr);
+				throw std::runtime_error("Error: Invalid value (not between 0 and 1000): " + valStr);
 			if (year < 2009 || (year == 2009 && month == 1 && day == 1))
 				throw std::runtime_error("Error: Bitcoin didn't exist on " + date);
 			while (priceData.find(year) == priceData.end())
