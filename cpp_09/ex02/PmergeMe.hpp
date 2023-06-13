@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   BitcoinExchange.hpp                                :+:    :+:            */
+/*   PmergeMe.hpp                                       :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/06/06 14:40:20 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/13 13:28:48 by fpurdom       ########   odam.nl         */
+/*   Created: 2023/06/13 19:03:17 by fpurdom       #+#    #+#                 */
+/*   Updated: 2023/06/13 19:03:35 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BITCOINEXCHANGE_HPP
-#define BITCOINEXCHANGE_HPP
+#ifndef PMERGEME_HPP
+#define PMERGEME_HPP
 
 #include <iostream>
-#include <map>
 
-class BitcoinExchange
+class PmergeMe
 {
 	private:
-		std::map<int, std::map<int, std::map<int, float> > >	priceData;
-
-		BitcoinExchange(const BitcoinExchange &copy);
-		BitcoinExchange	&operator=(const BitcoinExchange &copy);
+		
 
 	public:
-		BitcoinExchange();
-		~BitcoinExchange();
+		PmergeMe();
+		PmergeMe(const PmergeMe &copy);
+		~PmergeMe();
 
-		void	readPriceFile(std::string priceFileName);
-		void	exec(std::string valFileName);
+		PmergeMe	&operator=(const PmergeMe &copy);
 };
 
 #endif

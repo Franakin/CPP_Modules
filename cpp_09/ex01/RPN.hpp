@@ -1,35 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   BitcoinExchange.hpp                                :+:    :+:            */
+/*   RPN.hpp                                            :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/06/06 14:40:20 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/13 13:28:48 by fpurdom       ########   odam.nl         */
+/*   Created: 2023/06/13 15:13:55 by fpurdom       #+#    #+#                 */
+/*   Updated: 2023/06/13 16:28:47 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BITCOINEXCHANGE_HPP
-#define BITCOINEXCHANGE_HPP
+#ifndef RPN_HPP
+#define RPN_HPP
 
 #include <iostream>
-#include <map>
+#include <stack>
 
-class BitcoinExchange
+enum e_operator
+{
+	PLUS = '+',
+	MINUS = '-',
+	MULTI = '*',
+	DIVI = '/'
+};
+
+class RPN
 {
 	private:
-		std::map<int, std::map<int, std::map<int, float> > >	priceData;
+		std::stack<int>	numbers;
+		std::string		input;
 
-		BitcoinExchange(const BitcoinExchange &copy);
-		BitcoinExchange	&operator=(const BitcoinExchange &copy);
-
+		RPN();
+		RPN(const RPN &copy);
+		RPN	&operator=(const RPN &copy);
 	public:
-		BitcoinExchange();
-		~BitcoinExchange();
-
-		void	readPriceFile(std::string priceFileName);
-		void	exec(std::string valFileName);
+		RPN(std::string input);
+		~RPN();
+		void	exec();
+		void	calc(e_operator op);
 };
 
 #endif

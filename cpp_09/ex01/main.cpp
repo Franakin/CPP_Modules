@@ -5,39 +5,35 @@
 /*                                                     +:+                    */
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2023/06/06 14:40:23 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/13 15:28:01 by fpurdom       ########   odam.nl         */
+/*   Created: 2023/06/13 15:13:58 by fpurdom       #+#    #+#                 */
+/*   Updated: 2023/06/13 17:27:09 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
-#include "BitcoinExchange.hpp"
+#include "RPN.hpp"
 
 // void	f(void)
 // {
-// 	system("leaks -q btc");
+// 	system("leaks -q test");
 // }
 
 int main(int argc, char **argv)
 {
 	if (argc != 2)
 	{
-		std::cerr << "Usage: ./btc <input_file>";
+		std::cerr << "Usage: ./RPN \"<expression>\"" << std::endl;
 		return 1;
 	}
-	(void)argv, (void)argc;
-	BitcoinExchange	exchanger;
+	RPN	calc(argv[1]);
 	try
 	{
-		exchanger.readPriceFile("data.csv");
-		exchanger.exec(argv[1]);
+		calc.exec();
 	}
-	catch (const std::exception &e)
+	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
-		return 1;
+		std::cerr << "Error: " << e.what() << std::endl;
 	}
 	// atexit(f);
 	return 0;
 }
-
