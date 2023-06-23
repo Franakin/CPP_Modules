@@ -1,10 +1,11 @@
 SRC = main.cpp\
 PmergeMe.cpp\
+DequeUtils.cpp\
 
 NAME = PmergeMe
 
 $(NAME)	:	$(SRC)
-	c++ -Wall -Werror -Wextra -std=c++98 $(SRC) -o $(NAME) -Ofast
+	c++ -Wall -Werror -Wextra -std=c++98 $(SRC) -o $(NAME) -Ofast -g -fsanitize=address
 
 all		:	$(NAME)
 
