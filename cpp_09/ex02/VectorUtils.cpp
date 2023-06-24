@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/23 18:06:54 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/24 13:55:04 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/24 14:53:20 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ std::vector<int>	PmergeMe::getJacobsthalOrderVector(unsigned int pendSize) const
 {
 	int	prevGroupSize = 0, currentGroupSize = 2;
 	unsigned int	i = 0;
-	std::vector<int>	ret(pendSize);
+	std::vector<int>	ret(pendSize, 0);
 
 	if (pendSize < 2)
 		return ret;
@@ -85,7 +85,7 @@ std::vector<int>	PmergeMe::getJacobsthalOrderVector(unsigned int pendSize) const
 		for (int groupIterator = currentGroupSize - 1; groupIterator >= 0; groupIterator--)
 		{
 			ret[i] = groupOriginIndex + groupIterator;
-			if (ret[i] > (int)pendSize)
+			if (ret[i] >= (int)pendSize)
 			{
 				groupIterator = pendSize - i - 1;
 				ret[i] = groupOriginIndex + groupIterator;
@@ -99,7 +99,7 @@ std::vector<int>	PmergeMe::getJacobsthalOrderVector(unsigned int pendSize) const
 	return ret;
 }
 
-void	PmergeMe::insertionSortByJacob(std::vector<int> pend, std::vector<int> S, std::vector<int> pairInfo, std::vector<int> jacobOrder)
+void	PmergeMe::insertionSortByJacob(std::vector<int> &pend, std::vector<int> &S, std::vector<int> pairInfo, std::vector<int> jacobOrder)
 {
 	for (unsigned int i = 0; i < pend.size(); i++)
 	{

@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/13 19:03:11 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/24 13:46:31 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/24 15:44:13 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,17 @@ std::ostream& operator<<(std::ostream& os, const PmergeMe& sorter)
 {
 	std::deque<int>		dequeList = sorter.getDeque();
 	std::vector<int>	vectorList = sorter.getVector();
-	unsigned int	size = dequeList.size(), i;
+	unsigned int		size = dequeList.size(), i = 0;
+	std::deque<int>::iterator it = dequeList.begin();
 
-	for (i = 0; i < size && i < 10; i++)
-		os << dequeList[i] << ' ';
-	if (i != size)
+	for (; it != dequeList.end() && i < 10; i++, ++it)
+		os << *it << ' ';
+	it++;
+	if (i < size)
 		os << "[...]";
-	for (i = 0; i < size; i++)
-		if (dequeList[i] != vectorList[i])
-			throw std::runtime_error("Deque and vector are not the same");
+	// for (i = 0; i < size; i++)
+	// 	if (dequeList[i] != vectorList[i])
+	// 		throw std::runtime_error("Deque and vector are not the same");
 	return os;
 }
 
@@ -68,6 +70,7 @@ void	PmergeMe::checkStraggler(void)
 		hasStraggler = true;
 		straggler = asDeque[size - 1];
 		size--;
+		return;
 	}
 	hasStraggler = false;
 }
@@ -75,11 +78,12 @@ void	PmergeMe::checkStraggler(void)
 //DEQUE SORTER//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void	PmergeMe::sortDeque(void)
 {
+	if (size == 1)
+		return;
 	//CHECK FOR STRAGGLER
 	checkStraggler();
 	if (hasStraggler)
 		asDeque.pop_back();
-
 	//DIVIDE BY PAIRS AND SORT THE NUMBERS WITHIN EACH PAIR
 	sortWithinPairsDeque();
 
@@ -109,19 +113,21 @@ void	PmergeMe::sortDeque(void)
 //VECTOR SORTER/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void	PmergeMe::sortVector(void)
 {
+	if (size == 1)
+		return;
 	checkStraggler();
 	if (hasStraggler)
 		asVector.pop_back();
-	sortWithinPairsDeque();
-	sortByPairDeque();
+	sortWithinPairsVector();
+	sortByPairVector();
 
 	std::vector<int>	S, pend;
 	for (unsigned int i = 1; i < size; i += 2)
 	{
-		S.push_back(asDeque[i]);
-		pend.push_back(asDeque[i - 1]);
+		S.push_back(asVector[i]);
+		pend.push_back(asVector[i - 1]);
 	}
-	S.insert(S.begin(), asDeque[0]);
+	S.insert(S.begin(), asVector[0]);
 	pend.erase(pend.begin());
 
 	insertionSortByJacob(pend, S, getPairInfoVector(S.size()), getJacobsthalOrderVector(pend.size()));

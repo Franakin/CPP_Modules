@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/23 16:43:11 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/24 13:21:18 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/24 15:44:27 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ std::deque<int>	PmergeMe::getJacobsthalOrderDeque(unsigned int pendSize) const
 		for (int groupIterator = currentGroupSize - 1; groupIterator >= 0; groupIterator--)
 		{
 			ret[i] = groupOriginIndex + groupIterator;
-			if (ret[i] > (int)pendSize)
+			if (ret[i] >= (int)pendSize)
 			{
 				groupIterator = pendSize - i - 1;
 				ret[i] = groupOriginIndex + groupIterator;
@@ -99,7 +99,7 @@ std::deque<int>	PmergeMe::getJacobsthalOrderDeque(unsigned int pendSize) const
 	return ret;
 }
 
-void	PmergeMe::insertionSortByJacob(std::deque<int> pend, std::deque<int> S, std::deque<int> pairInfo, std::deque<int> jacobOrder)
+void	PmergeMe::insertionSortByJacob(std::deque<int> &pend, std::deque<int> &S, std::deque<int> pairInfo, std::deque<int> jacobOrder)
 {
 	for (unsigned int i = 0; i < pend.size(); i++)
 	{

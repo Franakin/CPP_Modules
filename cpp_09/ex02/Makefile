@@ -6,7 +6,7 @@ VectorUtils.cpp\
 NAME = PmergeMe
 
 $(NAME)	:	$(SRC)
-	c++ -Wall -Werror -Wextra -std=c++98 $(SRC) -o $(NAME) -Ofast -g -fsanitize=address
+	c++ -Wall -Werror -Wextra -std=c++98 $(SRC) -o $(NAME) -Ofast
 
 all		:	$(NAME)
 
