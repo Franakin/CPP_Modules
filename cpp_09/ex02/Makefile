@@ -1,6 +1,7 @@
 SRC = main.cpp\
 PmergeMe.cpp\
 DequeUtils.cpp\
+VectorUtils.cpp\
 
 NAME = PmergeMe
 
