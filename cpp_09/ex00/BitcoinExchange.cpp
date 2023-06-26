@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/06 14:40:18 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/13 15:02:03 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/26 18:36:15 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,10 @@ BitcoinExchange	&BitcoinExchange::operator=(const BitcoinExchange &copy){(void)c
 //static fnctions--------------------------------------------------------------------------------------------------------------------------------------
 static bool	isInt(std::string &str)
 {
+	if (*(std::prev(str.end())) == ' ')
+		str.erase(std::prev(str.end()));
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
-		if (!std::isdigit(*it) && *it != '-')
+		if ((!std::isdigit(*it) && *it != '-'))
 			return false;
 	return true;
 }
@@ -39,8 +41,10 @@ static bool	isFloat(std::string &str)
 
 	if (!oneDot)
 		return false;
+	if (*(str.begin()) == ' ')
+		str.erase(str.begin());
 	for (std::string::iterator it = str.begin(); it != str.end(); ++it)
-		if (!std::isdigit(*it) && *it != '.')
+		if ((!std::isdigit(*it) && *it != '.'))
 			return false;
 	return true;
 }
@@ -84,17 +88,17 @@ void	BitcoinExchange::readPriceFile(std::string priceFileName)
 	int			i = 1, year, month, day;
 	float		price;
 
-	std::getline(fin, date);
 	try
 	{
+		std::getline(fin, date);
+		if (date != "date,exchange_rate")
+			throw std::exception();
 		while (std::getline(fin, date, ','))
 		{
 			i++;
 			std::getline(fin, priceStr);
-			if (std::count(date.begin(), date.end(), '-') != 2)
+			if (std::count(date.begin(), date.end(), '-') != 2 || date.find(' ') != std::string::npos || priceStr.find(' ') != std::string::npos || !isInt(date) || !isFloat(priceStr))
 				throw std::exception();
-			if (!isInt(date) || !isFloat(priceStr))
-				throw std::runtime_error("Error: Uknown characters: " + date + ',' + priceStr);
 			initDate(date, priceStr, year, month, day, price);
 			if (price < 0 || validDate(year, month, day))
  				throw std::exception();
@@ -103,7 +107,7 @@ void	BitcoinExchange::readPriceFile(std::string priceFileName)
 	}
 	catch(const std::exception& e)
 	{
-		throw std::runtime_error("Error: Wrong input in data.csv on line " + std::to_string(i) + ": " + date + ',' + priceStr);
+		throw std::runtime_error("Error: Wrong input in data.csv on line " + std::to_string(i) + ": \"" + date + ((i != 1) ? "," + priceStr + '\"' : "\" (Incorrect format indicator)"));
 	}
 }
 
@@ -118,19 +122,21 @@ void	BitcoinExchange::exec(std::string valFileName)
 	float		value;
 
 	std::getline(fin, line);
+	if (line != "date | value" && line != "date|value" && line != "date |value" && line != "date| value")
+		throw std::runtime_error("Error: First line must be a correct format indicator");
 	while (std::getline(fin, line))
 	{
 		try
 		{
 			if (line.find('|') == std::string::npos)
-				throw std::runtime_error("Error: Incomplete: " + line);
+				throw std::runtime_error("Error: Incomplete: \"" + line + '\"');
 			const size_t	splitSpot = line.find('|');
 			date = line.substr(0, splitSpot);
 			if (std::count(date.begin(), date.end(), '-') != 2)
-				throw std::runtime_error("Error: Unknown date format: " + date);
+				throw std::runtime_error("Error: Unknown date format: \"" + date + '\"');
 			valStr = line.substr(splitSpot + 1, std::string::npos);
 			if (!isInt(date) || !isFloat(valStr))
-				throw std::runtime_error("Error: Uknown characters: " + line);
+				throw std::runtime_error("Error: Uknown characters or format: \"" + line + '\"');
 			initDate(date, valStr, year, month, day, value);
 			if (validDate(year, month, day))
 				throw std::runtime_error("Error: Invalid date: " + date);
