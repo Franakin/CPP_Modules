@@ -6,7 +6,7 @@
 /*   By: fpurdom <fpurdom@student.codam.nl>           +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2023/06/13 19:03:08 by fpurdom       #+#    #+#                 */
-/*   Updated: 2023/06/26 18:46:58 by fpurdom       ########   odam.nl         */
+/*   Updated: 2023/06/26 18:57:34 by fpurdom       ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,18 @@ int main(int argc, char **argv)
 		
 		std::cout << "\nBefore: " << sorter << std::endl;
 		dequeTime = clock();
-		if (!dequeTime)
+		if (dequeTime < 0)
 			throw std::runtime_error("Clock() error");
 		sorter.sortDeque();
 		dequeTime = clock() - dequeTime;
-		if (!dequeTime)
+		if (dequeTime < 0)
 			throw std::runtime_error("Clock() error");
 		vectorTime = clock();
-		if (!vectorTime)
+		if (vectorTime < 0)
 			throw std::runtime_error("Clock() error");
 		sorter.sortVector();
 		vectorTime = clock() - vectorTime;
-		if (!vectorTime)
+		if (vectorTime < 0)
 			throw std::runtime_error("Clock() error");
 		std::cout << "After:  " << sorter << std::endl << std::endl;
 		std::cout << "Is deque sorted?  " << sorter.isDequeSorted() << std::endl;
